@@ -3,12 +3,15 @@ import {
   addMonths,
   eachDayOfInterval,
   endOfMonth,
+  endOfWeek,
   format,
+  isSameDay,
   isSameMonth,
   isSameYear,
   parse,
   startOfMonth,
   startOfToday,
+  startOfWeek,
 } from "date-fns";
 import { cn } from "../lib/utils.ts";
 import { AnimatePresence, motion } from "framer-motion";
@@ -50,8 +53,8 @@ export function Calendar() {
 
   const days = useMemo(() => {
     return eachDayOfInterval({
-      start: firstDayOfMonth,
-      end: endOfMonth(firstDayOfMonth),
+      start: startOfWeek(firstDayOfMonth),
+      end: endOfWeek(endOfMonth(firstDayOfMonth)),
     });
   }, [firstDayOfMonth]);
 
@@ -186,7 +189,18 @@ export function Calendar() {
                   [dayPlacements[day.getDay()]]: true,
                 })}
               >
-                <button className="">{format(day, "dd")}</button>
+                <button
+                  className={cn({
+                    "w-8 h-8 rounded-full flex items-center justify-center":
+                      true,
+                    "text-gray-400": !isSameMonth(day, firstDayOfMonth),
+                    "text-gray-700": isSameMonth(day, firstDayOfMonth),
+                    "bg-blue-500": isSameDay(day, today),
+                    "text-white": isSameDay(day, today),
+                  })}
+                >
+                  {format(day, "d")}
+                </button>
               </div>
             ))}
           </motion.div>
